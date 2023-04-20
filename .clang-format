@@ -1,0 +1,6 @@
+ColumnLimit: 120
+BasedOnStyle: Chromium
+AlignAfterOpenBracket: BlockIndent
+AllowShortLambdasOnASingleLine: Empty
+AllowShortFunctionsOnASingleLine: Empty
+AlignConsecutiveAssignments: Consecutive
