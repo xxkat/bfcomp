@@ -7,4 +7,4 @@ This project was created as a learning project with the goal of learning about c
 
 ### What the f**k can it do?
 
-Currently, the compiler is able to generate machine code for all Brainfuck instructions except for putchar and getchar.
+Currently, the compiler is able to generate machine code for all Brainfuck instructions except for getchar.
