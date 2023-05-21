@@ -10,7 +10,7 @@ namespace bfcomp {
 constexpr static size_t kStackReserve{512};
 
 struct Branch {
-  explicit Branch(X86Assembler& cc) : m_begin{cc.add_label()}, m_end{cc.add_label()} {}
+  Branch(X86Assembler& cc) : m_begin{cc.add_label()}, m_end{cc.add_label()} {}
 
   void start(X86Assembler& cc) {
     cc.bind_label(m_begin);
@@ -65,39 +65,42 @@ inline void jit_compile(X86Assembler& cc, std::string_view code) {
   std::vector<Branch> branch_stack{};
 
   gen_prologue(cc);
-  {
-    for (const auto ch : code) {
-      switch (ch) {
-        case '>':
-          cc.emit_dec_r(Register::kRdi);
-          break;
-        case '<':
-          cc.emit_inc_r(Register::kRdi);
-          break;
-        case '[':
-          branch_stack.emplace_back(Branch{cc}).start(cc);
-          break;
-        case ']':
+
+  for (const auto ch : code) {
+    switch (ch) {
+      case '>':
+        cc.emit_dec_r(Register::kRdi);
+        break;
+      case '<':
+        cc.emit_inc_r(Register::kRdi);
+        break;
+      case '[':
+        branch_stack.emplace_back(cc).start(cc);
+        break;
+      case ']':
+        if (branch_stack.empty()) {
+          panic("Expected a closing loop!");
+        } else {
           branch_stack.back().close(cc);
           branch_stack.pop_back();
-          break;
-        case '+':
-          cc.emit_inc_rm8(Register::kRdi);
-          break;
-        case '-':
-          cc.emit_dec_rm8(Register::kRdi);
-          break;
-        case '.':
-          cc.emit_movzx_rm8(Register::kRcx, Register::kRdi);
-          cc.emit_call(putchar_label);
-          cc.emit_xor_rr(Register::kRax, Register::kRax);
-          break;
-        case ',':
-          cc.emit_int3();
-          break;
-      }
+        }
+        break;
+      case '+':
+        cc.emit_inc_rm8(Register::kRdi);
+        break;
+      case '-':
+        cc.emit_dec_rm8(Register::kRdi);
+        break;
+      case '.':
+        cc.emit_movzx_rm8(Register::kRcx, Register::kRdi);
+        cc.emit_call(putchar_label);
+        break;
+      case ',':
+        cc.emit_int3();
+        break;
     }
   }
+
   gen_epilogue(cc);
   gen_native_call(cc, putchar_label, std::putchar);
 }

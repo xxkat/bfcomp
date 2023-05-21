@@ -20,7 +20,7 @@ void print(std::format_string<Args...> fmt, Args&&... args) {
 template <typename... Args>
 void panic(std::format_string<Args...> fmt, Args&&... args) {
   print(std::cerr, fmt, std::forward<Args>(args)...);
-  std::terminate();
+  std::exit(EXIT_FAILURE);
 }
 
 }  // namespace bfcomp

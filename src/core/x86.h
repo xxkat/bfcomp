@@ -85,10 +85,6 @@ constexpr uint8_t make_modrm(uint8_t mod, uint8_t reg, uint8_t rm) {
   return mod << 6 | reg << 3 | rm;
 }
 
-constexpr uint8_t make_sib(int scale, uint8_t index, uint8_t base) {
-  return (scale & 0x3) << 6 | (index & 0x7) << 3 | (base & 0x7);
-}
-
 inline size_t relative_to_label(const Label* l, size_t rip, size_t len) {
   return l->rip() - rip - len;
 }
@@ -232,9 +228,6 @@ struct X86Assembler final : BaseAssembler {
   }
 
   void emit_call_r(Register reg) {
-    if (is_extended(reg)) {
-      emit<uint8_t>(make_rex(false, false, false, true));
-    }
     emit<uint8_t>(0xff);
     emit<uint8_t>(0xd0 + reg_to_int(reg));
   }
