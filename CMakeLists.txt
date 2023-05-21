@@ -7,7 +7,6 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 add_executable(
   ${PROJECT_NAME}
   src/main.cc
-  src/jit.cc
 )
 
 target_include_directories(
@@ -26,10 +25,10 @@ target_compile_options(
   ${PROJECT_NAME}
   PRIVATE
   -Wall
-  -flto
   -Wextra
   -Werror
-  -fno-rtti
   -Wpedantic
+  -flto
+  -fno-rtti
   -fno-exceptions
 )
